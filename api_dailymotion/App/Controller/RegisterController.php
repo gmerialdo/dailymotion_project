@@ -66,7 +66,7 @@ class RegisterController
                 ];
             }
             // send an email to the user with validation_code
-            //require_once "App/Mail.php";
+            require_once "App/Mail.php";
             $mail = (new Mail($email, $validation_code))->toMail();
             if($mail){
                 // return new User
@@ -183,7 +183,7 @@ class RegisterController
         ];
         $data = Model::select($req);
         // if a user was found with that email
-        if ($data["succeed"] && isset($data["data"][0])){
+        if ($data["succeed"] && $data["data"] != ""){
             // if password matches return user id
             if(hash("sha256", $password) == $data["data"][0]["password"]){
                 return $data["data"][0]["id"];
@@ -206,7 +206,7 @@ class RegisterController
         ];
         $data = Model::select($req);
         // if user was found with validation_code check codes match
-        if ($data["succeed"] && isset($data["data"][0])){
+        if ($data["succeed"] && $data["data"]!= ""){
             if($validation_code == $data["data"][0]["validation_code"]){
                 //check validation_code created less than a minute ago
                 $created_at = $data["data"][0]["created_at"];
