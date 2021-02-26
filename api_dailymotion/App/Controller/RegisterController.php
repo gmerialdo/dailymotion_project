@@ -3,12 +3,6 @@
 class RegisterController
 {
 
-    protected $_url;
-
-    public function __construct($url){
-        $this->_url=$url;
-    }
-
     public function createUser(){
         $safeData=$GLOBALS["safeData"];
         if (!$safeData->postEmpty()){

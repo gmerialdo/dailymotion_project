@@ -17,10 +17,8 @@ class RegisterControllerTest extends TestCase
         Model::init();
     }
 
-    private function seedUser($email = null, $password = null, $id = null, $code = null, $created_at = null){
-        $random_email = ($email)? $email : 'random_email'.rand(0, 1000).'@email.com';
-        $random_pw = ($password)? $password : 'random_pw'.rand(0, 1000);
-        $data = [$random_email, $random_pw];
+    private function seedUser($email, $password, $code){
+        $data = [$email, $password];
         $req = [
             "table"  => "users",
             "fields" => [
@@ -28,20 +26,18 @@ class RegisterControllerTest extends TestCase
                 'password'
             ]
         ];
-        Model::insert($req, $data);
-        //If id given, seed email_verifications table
-        if($id){
-            $data2 = [$id, $code, $created_at];
-            $req2 = [
-                "table"  => "email_verifications",
-                "fields" => [
-                    'user_id',
-                    'validation_code',
-                    'created_at'
-                ]
-            ];
+        $result = Model::insert($req, $data);
+        $user_id = $result["data"];
+        // seed email_verifications table
+        $data2 = [$user_id, $code];
+        $req2 = [
+            "table"  => "email_verifications",
+            "fields" => [
+                'user_id',
+                'validation_code'
+            ]
+        ];
         Model::insert($req2, $data2);
-        }
     }
 
     public function testCreateUserWithoutData()
@@ -55,10 +51,44 @@ class RegisterControllerTest extends TestCase
         $this->assertEquals("400", $response["code"]);
     }
 
-    public function testDeleteOnlyGoodUserWhenVerifiesWithExpiredCode()
+    // public function testDeleteOnlyGoodUserWhenVerifiesWithExpiredCode()
+    // {
+    //     $this->setGlobals();
+    //     $req = [
+    //         "fields" => ["*"],
+    //         "from" => "users",
+    //     ];
+    //     $data = Model::select($req);
+    //     $countUsersBefore = count($data);
+    //     // create user and created_at so that code is expired
+    //     $this->seedUser("my@email.com", "myPW", 1234, "2020-01-01 00:00:00");
+    //     $this->seedUser("another@email.com", "myPW", 2345, date("Y-m-d H:i:s"));
+    //     $req2 = [
+    //         "fields" => ["*"],
+    //         "from" => "users",
+    //     ];
+    //     $data2 = Model::select($req2);
+    //     $this->assertEquals($count+2, count($data2));
+    //     //mock the call by basic auth
+    //     // $_SERVER['PHP_AUTH_USER'] = "my@email.com";
+    //     // $_SERVER['PHP_AUTH_PW'] = "myPW";
+    //     $GLOBALS["safeData"]->_post["validation_code"] = 1234;
+    //     $c = new RegisterController("register/verify");
+    //     $response = $c->verifyCode("my@email.com", "myPW");
+    //     $body = $response["body"];
+    //     $this->assertEquals("validation_code expired, user deleted", $body["error"]);
+    //     //check that user was deleted and only him
+    //     $req3 = [
+    //         "fields" => ["*"],
+    //         "from" => "users",
+    //     ];
+    //     $data3 = Model::select($req3);
+    //     $this->assertEquals($count+1, count($data3));
+    // }
+
+    public function testCantVerifyUserWithInvalidCredentials()
     {
         $this->setGlobals();
-        $c = new RegisterController("register/user");
         $req = [
             "fields" => ["*"],
             "from" => "users",
@@ -66,8 +96,8 @@ class RegisterControllerTest extends TestCase
         $data = Model::select($req);
         $countUsersBefore = count($data);
         // create user and created_at so that code is expired
-        $this->seedUser("my@email.com", "myPW", 1000, 1234, "2020-01-01 00:00:00");
-        $this->seedUser();
+        $email = "my".rand(0,1000)."@email.com";
+        $this->seedUser($email, "myTruePW", 1234);
         $req2 = [
             "fields" => ["*"],
             "from" => "users",
@@ -78,17 +108,10 @@ class RegisterControllerTest extends TestCase
         // $_SERVER['PHP_AUTH_USER'] = "my@email.com";
         // $_SERVER['PHP_AUTH_PW'] = "myPW";
         $GLOBALS["safeData"]->_post["validation_code"] = 1234;
-        $c = new RegisterController("register/verify");
-        $response = $c->verifyCode("my@email.com", "myPW");
+        $c = new RegisterController();
+        $response = $c->verifyCode($email, "myWrongPW");
         $body = $response["body"];
-        $this->assertEquals("validation_code expired, user deleted", $body["error"]);
-        //check that user was deleted and only him
-        $req3 = [
-            "fields" => ["*"],
-            "from" => "users",
-        ];
-        $data3 = Model::select($req3);
-        $this->assertEquals($count+1, count($data3));
+        $this->assertEquals("basic authentication failed", $body["error"]);
     }
 
 }

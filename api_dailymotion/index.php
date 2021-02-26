@@ -30,7 +30,7 @@ $url = $safeData->_url;
 // routing
 switch ($url[0]){
     case 'register':
-        $register = new RegisterController($url);
+        $register = new RegisterController();
         if(!isset($url[1])) $url[1] = null;
         switch ($url[1]) {
             case 'user':
