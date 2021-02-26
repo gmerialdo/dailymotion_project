@@ -5,4 +5,7 @@
             "api_mail_server/"
         ]
     }
+   "require-dev": {
+        "phpunit/phpunit": "^9"
+    }
 }

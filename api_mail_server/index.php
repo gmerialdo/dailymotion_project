@@ -10,7 +10,7 @@ if (getenv('ENV_PROD')){
 }
 
 // get POST data and URL through Security.php
-$safeData = new Security([
+$safeData = new SecurityMail([
     "post" => [
         "email" => FILTER_SANITIZE_EMAIL,
         "validation_code" => FILTER_SANITIZE_NUMBER_INT,

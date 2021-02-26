@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
-final RegisterTest extends TestCase
+class RegisterTest extends TestCase
 {
 
     private $localhostURL = "http://localhost:8080/";
@@ -23,7 +23,6 @@ final RegisterTest extends TestCase
         return $response;
     }
 
-
     public function testRegisterUserSuccess()
     {
         $data = array(
@@ -34,7 +33,7 @@ final RegisterTest extends TestCase
         $response = $this->callPost($this->registerURL, $data);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $data = json_decode($response->getBody(true), true);
+        //$data = json_decode($response->getBody());
     }
 
 }
