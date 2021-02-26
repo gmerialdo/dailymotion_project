@@ -1,39 +1,32 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Client;
 
 class RegisterTest extends TestCase
 {
 
-    private $localhostURL = "http://localhost:8080/";
+    private $URL_localhost = "http://localhost:8080";
 
-    private $registerURL = 'api_dailymotion/register/user';
-
-    public function callPost($url, $data){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->localhostURL.$url);
-        curl_setopt($ch,CURLOPT_HTTPHEADER,array('Expect:'));
-        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        //curl_setopt($ch,CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch,CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-        return $response;
-    }
+    private $URL_register = '/api_dailymotion/register/user';
 
     public function testRegisterUserSuccess()
     {
-        $data = array(
+        // create our http client (Guzzle)
+        $client = new Client(['base_uri' => $this->URL_localhost]);
+
+        $data = [
             'email' => 'valid@email.fr',
             'password' => 'mysecretpassword',
             'password_confirmation' => 'mysecretpassword',
-        );
-        $response = $this->callPost($this->registerURL, $data);
-
+        ];
+        $response = $client->post($this->URL_register, [
+            'form_params' => $data
+        ]);
         $this->assertEquals(200, $response->getStatusCode());
-        //$data = json_decode($response->getBody());
+        $data = json_decode($response->getBody(true), true);
+        $this->assertArrayHasKey('body', $data);
+        $body = $data['body'];
+        $this->assertArrayHasKey('success', $body);
     }
 
 }

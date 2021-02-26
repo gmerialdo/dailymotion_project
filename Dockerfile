@@ -10,7 +10,6 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 
 COPY . .
-RUN chown -R www-data:www-data /var/www/html
 
 RUN curl -sS https://getcomposer.org/installer | \
     php -- --install-dir=/usr/bin/ --filename=composer
