@@ -72,7 +72,7 @@ class RegisterController
                 ];
             }
             // send an email to the user with validation_code
-            require_once "App/Mail.php";
+            //require_once "App/Mail.php";
             $mail = (new Mail($email, $validation_code))->toMail();
             if($mail){
                 // return new User
@@ -120,18 +120,16 @@ class RegisterController
         return Model::insert($req, $data);
     }
 
-
-
-    public function verifyCode(){
+    public function verifyCode($email, $password){
         $safeData=$GLOBALS["safeData"];
-        if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
-            return  [
-                "code" => "400",
-                "body" => ["error" => "missing credentials for Basic Auth"]
-            ];
-        }
-        $email = $_SERVER['PHP_AUTH_USER'];
-        $password = $_SERVER['PHP_AUTH_PW'];
+        // if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
+        //     return  [
+        //         "code" => "400",
+        //         "body" => ["error" => "missing credentials for Basic Auth"]
+        //     ];
+        // }
+        // $email = $_SERVER['PHP_AUTH_USER'];
+        // $password = $_SERVER['PHP_AUTH_PW'];
         if (!$safeData->postEmpty()){
             // if missing validation_code
             if(!isset($safeData->_post["validation_code"])){
@@ -157,10 +155,10 @@ class RegisterController
                     "body" => ["error" => $valid_code[1]]
                 ];
             }
-            // if wrong authentification
+            // if wrong authentication
             return  [
                 "code" => "401",
-                "body" => ["error" => "basic authentification failed"]
+                "body" => ["error" => "basic authentication failed"]
             ];
 
         }

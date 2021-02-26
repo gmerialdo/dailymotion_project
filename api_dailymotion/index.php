@@ -37,7 +37,16 @@ switch ($url[0]){
                 $response = $register->createUser();
                 break;
             case 'verify':
-                $response = $register->verifyCode();
+                if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
+                    $response = [
+                        "code" => "400",
+                        "body" => ["error" => "missing credentials for Basic Auth"]
+                    ];
+                } else {
+                    $email = $_SERVER['PHP_AUTH_USER'];
+                    $password = $_SERVER['PHP_AUTH_PW'];
+                    $response = $register->verifyCode($email, $password);
+            }
                 break;
             default:
                 $response = [
