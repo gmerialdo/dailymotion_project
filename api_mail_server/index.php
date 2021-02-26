@@ -1,6 +1,6 @@
 <?php
 
-require_once "App/Security.php";
+require_once "App/SecurityMail.php";
 
 // show errors if not in Prod
 if (getenv('ENV_PROD')){
