@@ -1,0 +1,8 @@
+{
+    "autoload": {
+        "classmap": [
+            "api_dailymotion/", 
+            "api_mail_server/"
+        ]
+    }
+}

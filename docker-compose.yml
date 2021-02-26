@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+  mysql:
+        image: mysql:5.7
+        container_name: mysql_server
+        restart: always
+        volumes:
+            - db-volume:/var/lib/mysql
+            - ./DB_dailymotion.sql:/docker-entrypoint-initdb.d/DB_dailymotion.sql
+        environment:
+          - MYSQL_DATABASE=dailymotion
+          - MYSQL_ROOT_PASSWORD=root
+        ports:
+          - "3306:3306"
+        command: --init-file /docker-entrypoint-initdb.d/DB_dailymotion.sql
+  web:
+    build:
+        context: ./
+    container_name: php_web
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+volumes:
+  db-volume:
