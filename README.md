@@ -7,3 +7,13 @@ To install the project on your computer, make sure your have Docker Compose. The
 ⋅⋅* cd dailymotion_project
 
 ⋅⋅* docker-compose up -d --build
+
+Then see api_dailymotion_documentation to call the API (on Postman for ex). 
+
+To run tests enter successively:
+
+⋅⋅* docker exec php_web composer dumpautoload
+
+⋅⋅* docker exec php_web vendor/bin/phpunit tests
+
+Thank you!
