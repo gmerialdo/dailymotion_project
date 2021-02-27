@@ -8,7 +8,7 @@ To install the project on your computer, make sure your have Docker Compose. The
 
 ⋅⋅* docker-compose up -d --build
 
-Then see api_dailymotion_documentation to call the API (on Postman for ex). 
+Then, you can access the API (on Postman for ex) by calling http://localhost:8080/ and adding the API URLs (see api_dailymotion_documentation in the project).
 
 To run tests enter successively:
 
