@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/index.php$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.(css|gif|ico|jpg|js|png|swf|svg|woff|ttf|eot)$
+RewriteRule . index.php [L]
+DirectoryIndex index.php /erreurs/erreur_403.php
+
